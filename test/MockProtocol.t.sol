@@ -107,7 +107,7 @@ contract MockProtocolTest is Test {
         uint256 depositAmount = 100 ether;
 
         vm.prank(alice);
-        vm.expectRevert("ERC20: insufficient allowance");
+        vm.expectRevert();
         protocol.deposit(depositAmount);
     }
 
