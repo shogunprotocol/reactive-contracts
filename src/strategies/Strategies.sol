@@ -242,32 +242,32 @@ contract Strategies is ReentrancyGuard {
     function emergencyExit(
         bytes calldata data
     ) external onlyAgent nonReentrant {
-        // uint256 balance = getBalance();
+        uint256 balance = getBalance();
 
-        // if (balance == 0) {
-        //     revert NoUnderlyingBalance();
-        // }
+        if (balance == 0) {
+            revert NoUnderlyingBalance();
+        }
 
         // Use provided data or build default calldata
-        // bytes memory callData;
-        // if (data.length > 0) {
-        //     callData = data;
-        // } else {
-        //     callData = abi.encodeWithSelector(withdrawSelector, balance);
-        // }
+        bytes memory callData;
+        if (data.length > 0) {
+            callData = data;
+        } else {
+            callData = abi.encodeWithSelector(withdrawSelector, balance);
+        }
 
-        // // Execute the withdraw
-        // (bool success, bytes memory result) = protocol.call(callData);
+        // Execute the withdraw
+        (bool success, bytes memory result) = protocol.call(callData);
 
-        // if (!success) {
-        //     bytes memory revertReason;
-        //     if (result.length > 0) {
-        //         assembly {
-        //             revertReason := add(result, 0x20)
-        //         }
-        //     }
-        //     revert WithdrawFailed(revertReason);
-        // }
+        if (!success) {
+            bytes memory revertReason;
+            if (result.length > 0) {
+                assembly {
+                    revertReason := add(result, 0x20)
+                }
+            }
+            revert WithdrawFailed(revertReason);
+        }
 
         // Transfer tokens to the vault
         uint256 tokenBalance = IERC20(underlyingToken).balanceOf(address(this));
