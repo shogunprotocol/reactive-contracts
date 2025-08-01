@@ -33,6 +33,8 @@ contract DeployReactive is Script {
         );
         console.log("Reactive contract deployed at:", address(reactive));
 
+        reactive.register();
+
         vm.stopBroadcast();
     }
 }

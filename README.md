@@ -205,7 +205,7 @@ cast call $REACTIVE_ADDRESS "isDone()" --rpc-url $REACTIVE_RPC_URL
 
 ## 📄 License
 
-GPL-2.0-or-later
+BUSL-1.1
 
 ## 🆘 Support
 

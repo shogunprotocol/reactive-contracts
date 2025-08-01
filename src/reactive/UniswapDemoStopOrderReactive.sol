@@ -29,6 +29,7 @@ contract UniswapDemoStopOrderReactive is IReactive, AbstractReactive {
     address private owner;
     PoolKey private poolKey;
 
+    ISystemContract private serviceA;
     event CallbackSent();
     event Done();
     event ReactRefunded(address indexed client, uint256 amount);
@@ -48,6 +49,10 @@ contract UniswapDemoStopOrderReactive is IReactive, AbstractReactive {
         uint256 _amountIn,
         uint256 _minAmountOut
     ) payable {
+        serviceA = ISystemContract(
+            payable(0x0000000000000000000000000000000000fffFfF)
+        );
+
         strategy = _strategy;
         callback = _callback;
         client = _client;
@@ -66,32 +71,11 @@ contract UniswapDemoStopOrderReactive is IReactive, AbstractReactive {
             tickSpacing: 60,
             hooks: IHooks(address(0))
         });
-
-        // Subscribe calls moved to separate function to avoid constructor failures
-        // service.subscribe(
-        //     SEPOLIA_CHAIN_ID,
-        //     strategy,
-        //     EMERGENCY_EXIT_TOPIC_0,
-        //     REACTIVE_IGNORE,
-        //     REACTIVE_IGNORE,
-        //     REACTIVE_IGNORE
-        // );
-        // // Subscribe to callback events if first subscription succeeded
-        // service.subscribe(
-        //     SEPOLIA_CHAIN_ID,
-        //     callback,
-        //     STOP_ORDER_STOP_TOPIC_0,
-        //     REACTIVE_IGNORE,
-        //     REACTIVE_IGNORE,
-        //     REACTIVE_IGNORE
-        // );
     }
 
-    /// @dev Subscribe to events after deployment
-    function setupSubscriptions() external {
-        require(msg.sender == owner, "Only owner can setup subscriptions");
-
-        service.subscribe(
+    function register() external {
+        require(msg.sender == owner, "Only owner");
+        serviceA.subscribe(
             SEPOLIA_CHAIN_ID,
             strategy,
             EMERGENCY_EXIT_TOPIC_0,
@@ -99,8 +83,7 @@ contract UniswapDemoStopOrderReactive is IReactive, AbstractReactive {
             REACTIVE_IGNORE,
             REACTIVE_IGNORE
         );
-        // Subscribe to callback events if first subscription succeeded
-        service.subscribe(
+        serviceA.subscribe(
             SEPOLIA_CHAIN_ID,
             callback,
             STOP_ORDER_STOP_TOPIC_0,
@@ -114,7 +97,6 @@ contract UniswapDemoStopOrderReactive is IReactive, AbstractReactive {
     function react(LogRecord calldata log) external vmOnly {
         require(!done, "Already done");
 
-        // 1) Confirmation of swap execution: callback emits STOP_ORDER_STOP_TOPIC_0
         if (
             log._contract == callback &&
             log.topic_0 == STOP_ORDER_STOP_TOPIC_0 &&
@@ -131,7 +113,6 @@ contract UniswapDemoStopOrderReactive is IReactive, AbstractReactive {
             return;
         }
 
-        // 2) EmergencyExit event sent by the strategy
         if (
             log._contract == strategy &&
             log.topic_0 == EMERGENCY_EXIT_TOPIC_0 &&

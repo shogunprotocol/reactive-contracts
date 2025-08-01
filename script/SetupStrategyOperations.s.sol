@@ -7,7 +7,7 @@ import "../src/strategies/Strategies.sol";
 contract SetupStrategyOperations is Script {
     // Update this address after deploying the strategy
     address constant STRATEGY_ADDRESS =
-        0xACF69128c3577c9C154E4D46A8B7C2576C230e2C;
+        0x77969091a0312E48970Fe46C35a9550FccdDC113;
     address constant USDC = 0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238;
 
     Strategies strategy;
