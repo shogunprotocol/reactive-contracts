@@ -36,6 +36,8 @@ contract SimpleSwap is AbstractCallback {
         router = UniversalRouter(payable(_router));
         poolManager = IPoolManager(_poolManager);
         permit2 = IPermit2(_permit2);
+        token0 = _token0;
+        token1 = _token1;
     }
 
     /// @notice Approves `amount` of `token` via Permit2 for the UniversalRouter
@@ -94,5 +96,28 @@ contract SimpleSwap is AbstractCallback {
         emit Stop(amountOut);
         require(amountOut >= minAmountOut, "Insufficient output amount");
         return amountOut;
+    }
+
+    /**
+     * @dev Emergency swap function for reactive contracts
+     * @param amount Amount of tokens to swap
+     * @param recipient Address to receive the swapped tokens
+     */
+    function emergencySwap(
+        uint256 amount,
+        address recipient,
+        uint256 /* minAmount */
+    ) external authorizedSenderOnly returns (uint256 amountOut) {
+        // Simple emergency swap - for demo purposes
+        // In production, this would integrate with Uniswap V4
+
+        // Note: recipient parameter would be used in actual implementation
+        recipient;
+
+        // For now, just emit an event to show the function was called
+        emit Stop(amount);
+
+        // Return the amount (simplified for demo)
+        return (amount * 99) / 100; // Simulate 1% slippage
     }
 }
