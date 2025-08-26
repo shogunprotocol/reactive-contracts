@@ -14,7 +14,7 @@
 
 1. **✅ Emergency Exit Execution**:
 
-   - Transaction: `0xd2f7cd644f81238f5d6dc21c6c84b6ee227ac826e062e86a1fad71dc92cca1bb`
+   - Transaction: [View on Etherscan](https://sepolia.etherscan.io/tx/0xd2f7cd644f81238f5d6dc21c6c84b6ee227ac826e062e86a1fad71dc92cca1bb)
 
 2. **✅ Swap Execution**:
 
